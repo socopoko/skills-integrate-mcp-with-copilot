@@ -5,7 +5,7 @@ A super simple FastAPI application that allows students to view and sign up for 
 ## Features
 
 - View all available extracurricular activities
-- Sign up for activities
+- Teacher login to manage activity registrations
 
 ## Getting Started
 
@@ -15,13 +15,20 @@ A super simple FastAPI application that allows students to view and sign up for 
    pip install fastapi uvicorn
    ```
 
-2. Run the application:
+2. Set the assigned teacher username and password in your environment. Keep
+   these values secret; do not commit them to source control.
+
+3. Start the application from the `src` directory:
 
    ```
-   python app.py
+   uvicorn app:app --reload
    ```
 
-3. Open your browser and go to:
+   For production deployments using HTTPS, set `COOKIE_SECURE=true` so the
+   session cookie is sent only over secure connections. Teacher sessions expire
+   after eight hours and are cleared when the server restarts.
+
+4. Open your browser and go to:
    - API documentation: http://localhost:8000/docs
    - Alternative documentation: http://localhost:8000/redoc
 
@@ -30,7 +37,11 @@ A super simple FastAPI application that allows students to view and sign up for 
 | Method | Endpoint                                                          | Description                                                         |
 | ------ | ----------------------------------------------------------------- | ------------------------------------------------------------------- |
 | GET    | `/activities`                                                     | Get all activities with their details and current participant count |
-| POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | Sign up for an activity                                             |
+| GET    | `/auth/status`                                                    | Check whether a teacher is logged in                                 |
+| POST   | `/auth/login`                                                     | Log in with the configured teacher credentials                      |
+| POST   | `/auth/logout`                                                    | End the current teacher session                                     |
+| POST   | `/activities/{activity_name}/signup?email=student@mergington.edu` | (Teacher only) Sign up a student for an activity                    |
+| DELETE | `/activities/{activity_name}/unregister?email=student@mergington.edu` | (Teacher only) Unregister a student                                  |
 
 ## Data Model
 
